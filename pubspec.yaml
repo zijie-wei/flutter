@@ -51,7 +51,6 @@ dependencies:
   # Camera & Image Handling
   camera: ^0.10.5+5
   image_picker: ^1.0.5
-  image_gallery_saver: ^2.0.3
 
   # Animation
   lottie: ^3.0.0

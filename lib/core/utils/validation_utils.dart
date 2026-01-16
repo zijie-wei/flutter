@@ -7,10 +7,7 @@ class ValidationUtils {
   }
 
   static bool isValidPassword(String password) {
-    if (password.length < 8) return false;
-    return RegExp(r'[A-Z]').hasMatch(password) &&
-           RegExp(r'[a-z]').hasMatch(password) &&
-           RegExp(r'[0-9]').hasMatch(password);
+    return password.length >= 6;
   }
 
   static String? validateEmail(String? value) {
@@ -28,7 +25,7 @@ class ValidationUtils {
       return '请输入密码';
     }
     if (!isValidPassword(value)) {
-      return '密码必须至少8位，包含大小写字母和数字';
+      return '密码必须至少6位';
     }
     return null;
   }
