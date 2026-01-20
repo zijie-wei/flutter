@@ -1,4 +1,4 @@
-name: Build iOS ARM Simulator
+name: Build iOS Simulator App
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout code
@@ -30,15 +30,37 @@ jobs:
           flutter clean
           flutter pub get
 
-      - name: Build iOS ARM Simulator
-        run: flutter build ios --release --no-codesign --simulator
+      - name: Check Xcode version
+        run: |
+          xcodebuild -version
+          xcrun simctl list devices
+
+      - name: Build iOS Simulator App
+        run: |
+          # 使用明确的目标平台和架构
+          flutter build ios --release --no-codesign --simulator --target-platform=ios-arm64
         env:
           FLUTTER_BUILD_NAME: 1.0.0
           FLUTTER_BUILD_NUMBER: 1
+          EXPORT_IPA: false
 
-      - name: Upload ARM Simulator App
+      - name: Verify Build Output
+        run: |
+          echo "Checking build directory..."
+          ls -la build/ios/
+          echo "Checking simulator build output..."
+          ls -la build/ios/iphonesimulator/
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Runner.app found successfully!"
+            echo "App size: $(du -sh build/ios/iphonesimulator/Runner.app)"
+          else
+            echo "❌ Runner.app not found!"
+            exit 1
+          fi
+
+      - name: Upload Simulator App
         uses: actions/upload-artifact@v4
         with:
-          name: ios-arm-simulator-app
+          name: ios-simulator-app
           path: build/ios/iphonesimulator/Runner.app
           retention-days: 30
