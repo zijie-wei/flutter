@@ -24,3 +24,13 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Build iOS ARM Simulator (Release)
+        run: flutter build ios --release --no-codesign --simulator
+
+      - name: Upload ARM Simulator .app (Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-arm-simulator-release
+          path: build/ios/iphonesimulator/Runner.app
+          retention-days: 30
