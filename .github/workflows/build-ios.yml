@@ -25,28 +25,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # 构建设备版本（Release）
-      - name: Build iOS Device (Release)
-        run: flutter build ios --release --no-codesign
-
-      - name: Upload Device .app (Release)
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-device-release-app
-          path: build/ios/iphoneos/Runner.app
-          retention-days: 30
-
-      # 构建设备版本（Debug）
-      - name: Build iOS Device (Debug)
-        run: flutter build ios --debug --no-codesign
-
-      - name: Upload Device .app (Debug)
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-device-debug-app
-          path: build/ios/iphoneos/Runner.app
-          retention-days: 30
-
       # 构建 ARM 模拟器版本（Release）
       - name: Build iOS ARM Simulator (Release)
         run: flutter build ios --release --no-codesign --simulator
