@@ -28,35 +28,19 @@ jobs:
       - name: Build iOS (Release)
         run: flutter build ios --release --no-codesign
 
-      - name: Create IPA
-        run: |
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/
-          zip -r ../../../app-release.ipa Payload/
-          cd ../../../..
-
-      - name: Upload IPA
+      - name: Upload .app (Release)
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-ipa
-          path: app-release.ipa
+          name: app-release-app
+          path: build/ios/iphoneos/Runner.app
           retention-days: 30
 
       - name: Build iOS (Debug)
         run: flutter build ios --debug --no-codesign
 
-      - name: Create Debug IPA
-        run: |
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/
-          zip -r ../../../app-debug.ipa Payload/
-          cd ../../../..
-
-      - name: Upload Debug IPA
+      - name: Upload .app (Debug)
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-ipa
-          path: app-debug.ipa
+          name: app-debug-app
+          path: build/ios/iphoneos/Runner.app
           retention-days: 30
