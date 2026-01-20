@@ -29,20 +29,30 @@ jobs:
       - name: Build iOS ARM Simulator (Release)
         run: flutter build ios --release --no-codesign --simulator
 
+      - name: Copy Release App
+        run: |
+          mkdir -p release-simulator
+          cp -r build/ios/iphonesimulator/Runner.app release-simulator/
+
       - name: Upload ARM Simulator .app (Release)
         uses: actions/upload-artifact@v4
         with:
           name: app-arm-simulator-release-app
-          path: build/ios/iphonesimulator/Runner.app
+          path: release-simulator/Runner.app
           retention-days: 30
 
       # 构建 ARM 模拟器版本（Debug）
       - name: Build iOS ARM Simulator (Debug)
         run: flutter build ios --debug --no-codesign --simulator
 
+      - name: Copy Debug App
+        run: |
+          mkdir -p debug-simulator
+          cp -r build/ios/iphonesimulator/Runner.app debug-simulator/
+
       - name: Upload ARM Simulator .app (Debug)
         uses: actions/upload-artifact@v4
         with:
           name: app-arm-simulator-debug-app
-          path: build/ios/iphonesimulator/Runner.app
+          path: debug-simulator/Runner.app
           retention-days: 30
