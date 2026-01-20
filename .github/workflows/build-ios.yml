@@ -4,61 +4,31 @@ on:
   workflow_dispatch:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.38.7'
           channel: 'stable'
-          cache: true
 
       - name: Install dependencies
         run: |
           flutter clean
           flutter pub get
 
-      - name: Check Xcode version
-        run: |
-          xcodebuild -version
-          xcrun simctl list devices
-
       - name: Build iOS Simulator App
-        run: |
-          # 使用明确的目标平台和架构
-          flutter build ios --release --no-codesign --simulator --target-platform=ios-arm64
-        env:
-          FLUTTER_BUILD_NAME: 1.0.0
-          FLUTTER_BUILD_NUMBER: 1
-          EXPORT_IPA: false
+        run: flutter build ios --release --no-codesign --simulator
 
-      - name: Verify Build Output
-        run: |
-          echo "Checking build directory..."
-          ls -la build/ios/
-          echo "Checking simulator build output..."
-          ls -la build/ios/iphonesimulator/
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Runner.app found successfully!"
-            echo "App size: $(du -sh build/ios/iphonesimulator/Runner.app)"
-          else
-            echo "❌ Runner.app not found!"
-            exit 1
-          fi
-
-      - name: Upload Simulator App
+      - name: Upload iOS Simulator App
         uses: actions/upload-artifact@v4
         with:
           name: ios-simulator-app
