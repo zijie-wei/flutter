@@ -6,7 +6,7 @@ on:
       build_type:
         description: 'Build Type'
         required: true
-        default: 'simulator'
+        default: 'ipa'
         type: choice
         options:
           - simulator
@@ -35,15 +35,15 @@ jobs:
           flutter pub get
 
       - name: Build iOS Simulator App
-        if: ${{ github.event.inputs.build_type == 'simulator' || github.event_name == 'push' }}
+        if: ${{ github.event.inputs.build_type == 'simulator' }}
         run: flutter build ios --release --no-codesign --simulator
 
       - name: Build iOS IPA
-        if: ${{ github.event.inputs.build_type == 'ipa' }}
+        if: ${{ github.event.inputs.build_type == 'ipa' || github.event_name == 'push' }}
         run: flutter build ipa --release --no-codesign
 
       - name: Upload iOS Simulator App
-        if: ${{ github.event.inputs.build_type == 'simulator' || github.event_name == 'push' }}
+        if: ${{ github.event.inputs.build_type == 'simulator' }}
         uses: actions/upload-artifact@v4
         with:
           name: ios-simulator-app
@@ -51,7 +51,7 @@ jobs:
           retention-days: 30
 
       - name: Upload iOS IPA
-        if: ${{ github.event.inputs.build_type == 'ipa' }}
+        if: ${{ github.event.inputs.build_type == 'ipa' || github.event_name == 'push' }}
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
