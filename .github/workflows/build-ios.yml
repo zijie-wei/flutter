@@ -1,7 +1,16 @@
-name: Build iOS Simulator App
+name: Build iOS App (Simulator and IPA)
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'simulator'
+        type: choice
+        options:
+          - simulator
+          - ipa
   push:
     branches: [ main, master ]
 
@@ -26,11 +35,28 @@ jobs:
           flutter pub get
 
       - name: Build iOS Simulator App
+        if: ${{ github.event.inputs.build_type == 'simulator' || github.event_name == 'push' }}
         run: flutter build ios --release --no-codesign --simulator
 
+      - name: Build iOS IPA
+        if: ${{ github.event.inputs.build_type == 'ipa' }}
+        run: |
+          flutter build ios --release
+          cd ios
+          xcodebuild -exportArchive -archivePath build/ios/archive/Runner.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ios/ipa
+
       - name: Upload iOS Simulator App
+        if: ${{ github.event.inputs.build_type == 'simulator' || github.event_name == 'push' }}
         uses: actions/upload-artifact@v4
         with:
           name: ios-simulator-app
           path: build/ios/iphonesimulator/Runner.app
+          retention-days: 30
+
+      - name: Upload iOS IPA
+        if: ${{ github.event.inputs.build_type == 'ipa' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: ios/build/ios/ipa/Runner.ipa
           retention-days: 30
